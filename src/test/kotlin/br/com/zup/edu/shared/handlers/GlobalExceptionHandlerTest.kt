@@ -26,6 +26,19 @@ internal class GlobalExceptionHandlerTest {
     }
 
     @Test
+    internal fun `shoult return 404 when statusException is NOT_FOUND`() {
+        val message = "not found"
+        val notFoundException = StatusRuntimeException(Status.NOT_FOUND
+            .withDescription(message))
+
+        val response = GlobalExceptionHandler().handle(genericRequest, notFoundException)
+
+        assertEquals(HttpStatus.NOT_FOUND, response.status)
+        assertNotNull(response.body())
+        assertEquals(message, (response.body() as JsonError).message)
+    }
+
+    @Test
     internal fun `shoult return 400 when statusException is INVALID_ARGUMENT`() {
         val message = "invalid argument"
         val badRequestException = StatusRuntimeException(Status.INVALID_ARGUMENT
