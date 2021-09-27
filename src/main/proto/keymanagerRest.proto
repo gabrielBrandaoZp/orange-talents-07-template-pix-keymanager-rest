@@ -6,14 +6,110 @@ option java_outer_classname = "KeymanagerRest";
 
 package br.com.zup.edu;
 
-service KeymanagerRestService {
-  rpc send (KeymanagerRestRequest) returns (KeymanagerRestReply) {}
+service KeyManagerRegisterService {
+  rpc registerKey (NewKeyRequest) returns (NewKeyResponse) {}
 }
 
-message KeymanagerRestRequest {
+service KeyManagerRemoveService {
+  rpc removeKey (RemoveKeyRequest) returns (RemoveKeyResponse) {}
+}
+
+service KeyManagerSearchPixService {
+  rpc searchKeyInternal (SearchKeyRequest) returns (SearchKeyResponse) {}
+  rpc searchKeyExternal (SearchKeyExternalRequest) returns (SearchKeyExternalResponse) {}
+}
+
+service KeyManagerListUserPixService {
+  rpc listUserPix (ListUserPixRequest) returns (ListUserPixResponse) {}
+}
+
+message ListUserPixRequest {
+  string userId = 1;
+}
+
+message ListUserPixResponse {
+  string userId = 1;
+
+  message PixDetails {
+    int64 pixId = 1;
+    PixInfo pixInfo = 2;
+    string accountType = 3;
+  }
+
+  repeated PixDetails pixDetails = 2;
+}
+
+message SearchKeyExternalRequest {
+  string pixValue = 1;
+}
+
+message SearchKeyExternalResponse {
+  PixInfo pixInfo = 1;
+  UserInfo userInfo = 2;
+  AccountInfo accountInfo = 3;
+}
+
+message SearchKeyRequest {
+  string userId = 1;
+  int64 pixId = 2;
+}
+
+message PixInfo {
+  string pixType = 1;
+  string pixValue = 2;
+  string createdAt = 3;
+}
+
+message UserInfo {
   string name = 1;
+  string cpf = 2;
 }
 
-message KeymanagerRestReply {
-  string message = 1;
+message AccountInfo {
+  string institution = 1;
+  string agency = 2;
+  string number = 3;
+  string accountType = 4;
+}
+
+message SearchKeyResponse {
+  string userId = 1;
+  int64 pixIdInternal = 2;
+  PixInfo pixInfo = 3;
+  UserInfo userInfo = 4;
+  AccountInfo accountInfo = 5;
+}
+
+message NewKeyRequest {
+  enum PixType {
+    UNKNOWN_KEY_TYPE = 0;
+    CPF = 1;
+    EMAIL = 2;
+    TELEFONE = 3;
+    CHAVE_ALEATORIA = 4;
+  }
+
+  enum AccountType {
+    UNKNOWN_ACCOUNT_TYPE = 0;
+    CONTA_POUPANCA = 1;
+    CONTA_CORRENTE = 2;
+  }
+
+  string userId = 1;
+  PixType pixType = 2;
+  string pixValue = 3;
+  AccountType accountType = 4;
+}
+
+message NewKeyResponse {
+  string pixId = 1;
+}
+
+message RemoveKeyRequest {
+  string userId = 1;
+  string pixValue = 2;
+}
+
+message RemoveKeyResponse {
+  bool result = 1;
 }
