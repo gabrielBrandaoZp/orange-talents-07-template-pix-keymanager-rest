@@ -2,6 +2,7 @@ package br.com.zup.edu.shared.grpc
 
 import br.com.zup.edu.KeyManagerRegisterServiceGrpc
 import br.com.zup.edu.KeyManagerRemoveServiceGrpc
+import br.com.zup.edu.KeyManagerSearchPixServiceGrpc
 import io.grpc.ManagedChannel
 import io.micronaut.context.annotation.Factory
 import io.micronaut.grpc.annotation.GrpcChannel
@@ -15,4 +16,7 @@ class KeymanagerGrpcFactory(@GrpcChannel("keymanager") val channel: ManagedChann
 
     @Singleton
     fun removeKey() = KeyManagerRemoveServiceGrpc.newBlockingStub(channel)
+
+    @Singleton
+    fun findKey() = KeyManagerSearchPixServiceGrpc.newBlockingStub(channel)
 }
