@@ -25,7 +25,7 @@ class SearchPixController(
 
     @Get(value = "/pix/{pixId}")
     fun find(@PathVariable("pixId") pixId: String): HttpResponse<SearchPixResponse> {
-        logger.info("method=find, msg=findinig pix: {}", pixId)
+        logger.info("method=find, msg=finding pix: {}", pixId)
 
         val request = SearchKeyExternalRequest.newBuilder()
             .setPixValue(pixId)
@@ -37,6 +37,8 @@ class SearchPixController(
 
     @Get("/{clienteId}/pix")
     fun findAll(@PathVariable("clienteId") clienteId: UUID): HttpResponse<ListPixResponse> {
+        logger.info("method=findAll, msg=finding all pix keys for user: {}", clienteId)
+
         val request = ListUserPixRequest.newBuilder()
             .setUserId(clienteId.toString())
             .build()

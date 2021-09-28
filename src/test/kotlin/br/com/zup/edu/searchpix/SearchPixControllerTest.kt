@@ -13,7 +13,8 @@ import io.micronaut.http.client.annotation.Client
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given
@@ -28,12 +29,17 @@ internal class SearchPixControllerTest(
 
     @Inject
     val searchManager: KeyManagerSearchPixServiceGrpc.KeyManagerSearchPixServiceBlockingStub,
+
+    @Inject
+    val listManager: KeyManagerListUserPixServiceGrpc.KeyManagerListUserPixServiceBlockingStub,
 ) {
 
+    private lateinit var validUserId: String
     private lateinit var validPix: String
 
     @BeforeEach
     internal fun setUp() {
+        validUserId = "c56dfef4-7901-44fb-84e2-a2cefb157890"
         validPix = "ponte@email.com"
     }
 
@@ -53,6 +59,29 @@ internal class SearchPixControllerTest(
 
         val request = HttpRequest.GET<Any>("/api/v1/clientes/pix/${validPix}")
         val response = client.toBlocking().exchange(request, Any::class.java)
+
+        assertNotNull(response)
+        assertEquals(HttpStatus.OK, response.status)
+    }
+
+    @Test
+    internal fun `should return 200 and list of pix keys of valid user`() {
+        val pixDetails = listOf(ListUserPixResponse.PixDetails.newBuilder()
+            .setPixId(1)
+            .setPixInfo(createGrpcPixInfo())
+            .setAccountType("CONTA_CORRENTE")
+            .build())
+
+        val grpcResponse = ListUserPixResponse.newBuilder()
+            .setUserId(validUserId)
+            .addAllPixDetails(pixDetails)
+            .build()
+
+        given(listManager.listUserPix(Mockito.any())).willReturn(grpcResponse)
+
+        val request = HttpRequest.GET<Any>("/api/v1/clientes/${validUserId}/pix")
+        val response = client.toBlocking()
+            .exchange(request, Any::class.java)
 
         assertNotNull(response)
         assertEquals(HttpStatus.OK, response.status)
@@ -87,6 +116,11 @@ internal class SearchPixControllerTest(
     internal class MockitoStubFactory {
 
         @Singleton
-        fun stubMock() = Mockito.mock(KeyManagerSearchPixServiceGrpc.KeyManagerSearchPixServiceBlockingStub::class.java)
+        fun stubMockSearch() =
+            Mockito.mock(KeyManagerSearchPixServiceGrpc.KeyManagerSearchPixServiceBlockingStub::class.java)
+
+        @Singleton
+        fun stubMockList() =
+            Mockito.mock(KeyManagerListUserPixServiceGrpc.KeyManagerListUserPixServiceBlockingStub::class.java)
     }
 }
