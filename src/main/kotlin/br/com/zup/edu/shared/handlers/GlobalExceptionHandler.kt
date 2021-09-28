@@ -19,7 +19,7 @@ class GlobalExceptionHandler : ExceptionHandler<StatusRuntimeException, HttpResp
         val statusCode = exception.status.code
         val description = exception.status.description
         val (httpStatus, message) = when (statusCode) {
-            Status.FAILED_PRECONDITION.code -> Pair(HttpStatus.NOT_FOUND, description)
+            Status.FAILED_PRECONDITION.code -> Pair(HttpStatus.SERVICE_UNAVAILABLE, description)
             Status.NOT_FOUND.code -> Pair(HttpStatus.NOT_FOUND, description)
             Status.INVALID_ARGUMENT.code -> Pair(HttpStatus.BAD_REQUEST, description)
             Status.ALREADY_EXISTS.code -> Pair(HttpStatus.UNPROCESSABLE_ENTITY, description)

@@ -13,14 +13,14 @@ internal class GlobalExceptionHandlerTest {
     private val genericRequest = HttpRequest.GET<Any>("/")
 
     @Test
-    internal fun `shoult return 404 when statusException is FAILED_PRECONDITION`() {
-        val message = "not found"
+    internal fun `shoult return 503 when statusException is FAILED_PRECONDITION`() {
+        val message = "service unavailable"
         val notFoundException = StatusRuntimeException(Status.FAILED_PRECONDITION
             .withDescription(message))
 
         val response = GlobalExceptionHandler().handle(genericRequest, notFoundException)
 
-        assertEquals(HttpStatus.NOT_FOUND, response.status)
+        assertEquals(HttpStatus.SERVICE_UNAVAILABLE, response.status)
         assertNotNull(response.body())
         assertEquals(message, (response.body() as JsonError).message)
     }
