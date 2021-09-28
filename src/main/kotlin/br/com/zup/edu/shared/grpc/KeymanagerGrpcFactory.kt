@@ -1,5 +1,6 @@
 package br.com.zup.edu.shared.grpc
 
+import br.com.zup.edu.KeyManagerListUserPixServiceGrpc
 import br.com.zup.edu.KeyManagerRegisterServiceGrpc
 import br.com.zup.edu.KeyManagerRemoveServiceGrpc
 import br.com.zup.edu.KeyManagerSearchPixServiceGrpc
@@ -19,4 +20,7 @@ class KeymanagerGrpcFactory(@GrpcChannel("keymanager") val channel: ManagedChann
 
     @Singleton
     fun findKey() = KeyManagerSearchPixServiceGrpc.newBlockingStub(channel)
+
+    @Singleton
+    fun listUserKeys() = KeyManagerListUserPixServiceGrpc.newBlockingStub(channel)
 }
