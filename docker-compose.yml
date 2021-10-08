@@ -1,0 +1,17 @@
+version: '3'
+services:
+  keymanager-rest:
+    build:
+      dockerfile: ./Dockerfile
+      context: .
+    container_name: keymanager-rest-service
+    image: "brandaogabriel/keymanager-rest:latest"
+    ports:
+      - "8080:8080"
+    environment:
+      KEYMANAGER_GRPC_HOST: "keymanager-grpc:50051"
+
+networks:
+  default:
+    external:
+      name: local-net
